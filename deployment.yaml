@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment #k8s resource kind we are creating
+metadata:
+  name: docker-k8s
+spec:
+  selector:
+    matchLabels:
+      app: docker-k8s
+  replicas: 2 # Numbers of replicas that will be created for this deployment
+  template:
+    metadata:
+      labels:
+        app: docker-k8s
+    spec:
+      containers:
+        - name: docker-k8s
+          image: docker-k8s:1.0 #image that will be used to containers in the cluster
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080 #The port that the container is running in the cluster
+---
+apiVersion: v1 #k8s API version
+kind: Service #k8s resource kind we are creating
+metadata:
+  name: docker-k8s-svc
+spec:
+  selector:
+    app: docker-k8s
+  ports:
+    - protocol: "TCP"
+      port: 8080 # the port exposed by the service
+  type: NodePort # type of the service.
